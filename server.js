@@ -268,30 +268,32 @@ app.post('/api/pedigree', (req, res) => {
 });
 
 // Statistics API
-app.get('/api/statistics', (req, res) => {
-    const stats = {};
-    
-    db.get('SELECT COUNT(*) as count FROM donkeys', [], (err, row) => {
-        stats.total_donkeys = row ? row.count : 0;
+app.get('/api/statistics', async (req, res) => {
+    try {
+        const promisify = require('util').promisify;
+        const dbGet = promisify(db.get.bind(db));
         
-        db.get('SELECT COUNT(*) as count FROM donkeys WHERE gender = "公"', [], (err, row) => {
-            stats.male_donkeys = row ? row.count : 0;
-            
-            db.get('SELECT COUNT(*) as count FROM donkeys WHERE gender = "母"', [], (err, row) => {
-                stats.female_donkeys = row ? row.count : 0;
-                
-                db.get('SELECT COUNT(*) as count FROM breeding_records', [], (err, row) => {
-                    stats.total_breedings = row ? row.count : 0;
-                    
-                    db.get('SELECT COUNT(*) as count FROM foal_records', [], (err, row) => {
-                        stats.total_foals = row ? row.count : 0;
-                        
-                        res.json({ data: stats });
-                    });
-                });
-            });
-        });
-    });
+        const [totalDonkeys, maleDonkeys, femaleDonkeys, totalBreedings, totalFoals] = await Promise.all([
+            dbGet('SELECT COUNT(*) as count FROM donkeys'),
+            dbGet('SELECT COUNT(*) as count FROM donkeys WHERE gender = "公"'),
+            dbGet('SELECT COUNT(*) as count FROM donkeys WHERE gender = "母"'),
+            dbGet('SELECT COUNT(*) as count FROM breeding_records'),
+            dbGet('SELECT COUNT(*) as count FROM foal_records')
+        ]);
+        
+        const stats = {
+            total_donkeys: totalDonkeys ? totalDonkeys.count : 0,
+            male_donkeys: maleDonkeys ? maleDonkeys.count : 0,
+            female_donkeys: femaleDonkeys ? femaleDonkeys.count : 0,
+            total_breedings: totalBreedings ? totalBreedings.count : 0,
+            total_foals: totalFoals ? totalFoals.count : 0
+        };
+        
+        res.json({ data: stats });
+    } catch (error) {
+        console.error('Error getting statistics:', error);
+        res.status(500).json({ error: 'Failed to get statistics' });
+    }
 });
 
 // Start server

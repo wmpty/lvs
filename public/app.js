@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==================== Navigation ====================
-function showSection(sectionName) {
+function showSection(sectionName, event) {
     // Hide all sections
     document.querySelectorAll('.content-section').forEach(section => {
         section.classList.remove('active');
@@ -23,7 +23,9 @@ function showSection(sectionName) {
     document.getElementById(`${sectionName}-section`).classList.add('active');
     
     // Add active class to clicked button
-    event.target.classList.add('active');
+    if (event && event.target) {
+        event.target.classList.add('active');
+    }
     
     // Load data for the section
     switch(sectionName) {
