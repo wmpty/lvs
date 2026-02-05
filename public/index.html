@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>毛驴育种管理系统</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <h1>🐴 毛驴育种管理系统</h1>
+            <p class="subtitle">Donkey Breeding Management System</p>
+        </header>
+
+        <!-- Statistics Dashboard -->
+        <section class="statistics-section" id="statisticsSection">
+            <h2>📊 系统概览</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalDonkeys">0</div>
+                    <div class="stat-label">种驴总数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="maleDonkeys">0</div>
+                    <div class="stat-label">公驴数量</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="femaleDonkeys">0</div>
+                    <div class="stat-label">母驴数量</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalBreedings">0</div>
+                    <div class="stat-label">配种次数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalFoals">0</div>
+                    <div class="stat-label">产驹总数</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Navigation Menu -->
+        <nav class="main-nav">
+            <button class="nav-btn active" onclick="showSection('donkeys', event)">
+                🐴 种驴信息
+            </button>
+            <button class="nav-btn" onclick="showSection('breeding', event)">
+                💕 配种记录
+            </button>
+            <button class="nav-btn" onclick="showSection('foals', event)">
+                🍼 产驹记录
+            </button>
+            <button class="nav-btn" onclick="showSection('milk', event)">
+                🥛 奶量记录
+            </button>
+            <button class="nav-btn" onclick="showSection('disease', event)">
+                💊 疫病检测
+            </button>
+            <button class="nav-btn" onclick="showSection('vaccination', event)">
+                💉 疫苗接种
+            </button>
+            <button class="nav-btn" onclick="showSection('pedigree', event)">
+                📜 血统登记
+            </button>
+        </nav>
+
+        <!-- 种驴信息 Section -->
+        <section class="content-section active" id="donkeys-section">
+            <div class="section-header">
+                <h2>🐴 种驴基础信息</h2>
+                <button class="btn-primary" onclick="showAddDonkeyForm()">+ 添加种驴</button>
+            </div>
+
+            <!-- Add Donkey Form -->
+            <div class="form-container" id="addDonkeyForm" style="display: none;">
+                <h3>添加种驴信息</h3>
+                <form onsubmit="addDonkey(event)">
+                    <div class="form-group">
+                        <label>名称 *</label>
+                        <input type="text" id="donkey_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>品种 *</label>
+                        <input type="text" id="donkey_breed" required>
+                    </div>
+                    <div class="form-group">
+                        <label>性别 *</label>
+                        <select id="donkey_gender" required>
+                            <option value="">请选择</option>
+                            <option value="公">公</option>
+                            <option value="母">母</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>出生日期</label>
+                        <input type="date" id="donkey_birth_date">
+                    </div>
+                    <div class="form-group">
+                        <label>血缘</label>
+                        <input type="text" id="donkey_bloodline">
+                    </div>
+                    <div class="form-group">
+                        <label>健康状态</label>
+                        <select id="donkey_health_status">
+                            <option value="健康">健康</option>
+                            <option value="良好">良好</option>
+                            <option value="需观察">需观察</option>
+                            <option value="治疗中">治疗中</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>备注</label>
+                        <textarea id="donkey_remarks" rows="3"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">保存</button>
+                        <button type="button" class="btn-secondary" onclick="hideAddDonkeyForm()">取消</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Donkeys List -->
+            <div class="data-list" id="donkeysList"></div>
+        </section>
+
+        <!-- 配种记录 Section -->
+        <section class="content-section" id="breeding-section">
+            <div class="section-header">
+                <h2>💕 配种记录</h2>
+                <button class="btn-primary" onclick="showAddBreedingForm()">+ 添加配种记录</button>
+            </div>
+
+            <!-- Add Breeding Form -->
+            <div class="form-container" id="addBreedingForm" style="display: none;">
+                <h3>添加配种记录</h3>
+                <form onsubmit="addBreedingRecord(event)">
+                    <div class="form-group">
+                        <label>公驴 *</label>
+                        <select id="breeding_male_id" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>母驴 *</label>
+                        <select id="breeding_female_id" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>配种日期 *</label>
+                        <input type="date" id="breeding_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>配种方式</label>
+                        <select id="breeding_method">
+                            <option value="自然配种">自然配种</option>
+                            <option value="人工授精">人工授精</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>是否成功</label>
+                        <select id="breeding_success">
+                            <option value="0">待确认</option>
+                            <option value="1">成功</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>备注</label>
+                        <textarea id="breeding_remarks" rows="3"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">保存</button>
+                        <button type="button" class="btn-secondary" onclick="hideAddBreedingForm()">取消</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Breeding Records List -->
+            <div class="data-list" id="breedingList"></div>
+        </section>
+
+        <!-- 产驹记录 Section -->
+        <section class="content-section" id="foals-section">
+            <div class="section-header">
+                <h2>🍼 产驹记录</h2>
+                <button class="btn-primary" onclick="showAddFoalForm()">+ 添加产驹记录</button>
+            </div>
+
+            <!-- Add Foal Form -->
+            <div class="form-container" id="addFoalForm" style="display: none;">
+                <h3>添加产驹记录</h3>
+                <form onsubmit="addFoalRecord(event)">
+                    <div class="form-group">
+                        <label>母驴 *</label>
+                        <select id="foal_mother_id" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>公驴</label>
+                        <select id="foal_father_id"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>驹驴(如已登记)</label>
+                        <select id="foal_foal_id"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>出生日期 *</label>
+                        <input type="date" id="foal_birth_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>出生体重(kg)</label>
+                        <input type="number" step="0.1" id="foal_birth_weight">
+                    </div>
+                    <div class="form-group">
+                        <label>健康状况</label>
+                        <input type="text" id="foal_health_condition">
+                    </div>
+                    <div class="form-group">
+                        <label>备注</label>
+                        <textarea id="foal_remarks" rows="3"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">保存</button>
+                        <button type="button" class="btn-secondary" onclick="hideAddFoalForm()">取消</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Foals List -->
+            <div class="data-list" id="foalsList"></div>
+        </section>
+
+        <!-- 奶量记录 Section -->
+        <section class="content-section" id="milk-section">
+            <div class="section-header">
+                <h2>🥛 奶量记录</h2>
+                <button class="btn-primary" onclick="showAddMilkForm()">+ 添加奶量记录</button>
+            </div>
+
+            <!-- Add Milk Form -->
+            <div class="form-container" id="addMilkForm" style="display: none;">
+                <h3>添加奶量记录</h3>
+                <form onsubmit="addMilkRecord(event)">
+                    <div class="form-group">
+                        <label>母驴 *</label>
+                        <select id="milk_donkey_id" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>记录日期 *</label>
+                        <input type="date" id="milk_record_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>早上产奶量(L)</label>
+                        <input type="number" step="0.1" id="milk_morning_amount">
+                    </div>
+                    <div class="form-group">
+                        <label>下午产奶量(L)</label>
+                        <input type="number" step="0.1" id="milk_afternoon_amount">
+                    </div>
+                    <div class="form-group">
+                        <label>晚上产奶量(L)</label>
+                        <input type="number" step="0.1" id="milk_evening_amount">
+                    </div>
+                    <div class="form-group">
+                        <label>质量等级</label>
+                        <select id="milk_quality_grade">
+                            <option value="优">优</option>
+                            <option value="良">良</option>
+                            <option value="中">中</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>备注</label>
+                        <textarea id="milk_remarks" rows="3"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">保存</button>
+                        <button type="button" class="btn-secondary" onclick="hideAddMilkForm()">取消</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Milk Records List -->
+            <div class="data-list" id="milkList"></div>
+        </section>
+
+        <!-- 疫病检测 Section -->
+        <section class="content-section" id="disease-section">
+            <div class="section-header">
+                <h2>💊 疫病检测记录</h2>
+                <button class="btn-primary" onclick="showAddDiseaseForm()">+ 添加检测记录</button>
+            </div>
+
+            <!-- Add Disease Form -->
+            <div class="form-container" id="addDiseaseForm" style="display: none;">
+                <h3>添加疫病检测记录</h3>
+                <form onsubmit="addDiseaseRecord(event)">
+                    <div class="form-group">
+                        <label>种驴 *</label>
+                        <select id="disease_donkey_id" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>检测日期 *</label>
+                        <input type="date" id="disease_detection_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>疾病名称</label>
+                        <input type="text" id="disease_name">
+                    </div>
+                    <div class="form-group">
+                        <label>检测结果</label>
+                        <select id="disease_detection_result">
+                            <option value="阴性">阴性</option>
+                            <option value="阳性">阳性</option>
+                            <option value="待复查">待复查</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>治疗方案</label>
+                        <textarea id="disease_treatment" rows="2"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>治疗日期</label>
+                        <input type="date" id="disease_treatment_date">
+                    </div>
+                    <div class="form-group">
+                        <label>康复状态</label>
+                        <select id="disease_recovery_status">
+                            <option value="治疗中">治疗中</option>
+                            <option value="好转">好转</option>
+                            <option value="已康复">已康复</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>备注</label>
+                        <textarea id="disease_remarks" rows="3"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">保存</button>
+                        <button type="button" class="btn-secondary" onclick="hideAddDiseaseForm()">取消</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Disease Records List -->
+            <div class="data-list" id="diseaseList"></div>
+        </section>
+
+        <!-- 疫苗接种 Section -->
+        <section class="content-section" id="vaccination-section">
+            <div class="section-header">
+                <h2>💉 疫苗接种记录</h2>
+                <button class="btn-primary" onclick="showAddVaccinationForm()">+ 添加接种记录</button>
+            </div>
+
+            <!-- Add Vaccination Form -->
+            <div class="form-container" id="addVaccinationForm" style="display: none;">
+                <h3>添加疫苗接种记录</h3>
+                <form onsubmit="addVaccinationRecord(event)">
+                    <div class="form-group">
+                        <label>种驴 *</label>
+                        <select id="vaccination_donkey_id" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>疫苗名称 *</label>
+                        <input type="text" id="vaccination_vaccine_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>接种日期 *</label>
+                        <input type="date" id="vaccination_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>下次接种日期</label>
+                        <input type="date" id="vaccination_next_date">
+                    </div>
+                    <div class="form-group">
+                        <label>批次号</label>
+                        <input type="text" id="vaccination_batch_number">
+                    </div>
+                    <div class="form-group">
+                        <label>接种人员</label>
+                        <input type="text" id="vaccination_administrator">
+                    </div>
+                    <div class="form-group">
+                        <label>备注</label>
+                        <textarea id="vaccination_remarks" rows="3"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">保存</button>
+                        <button type="button" class="btn-secondary" onclick="hideAddVaccinationForm()">取消</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Vaccination Records List -->
+            <div class="data-list" id="vaccinationList"></div>
+        </section>
+
+        <!-- 血统登记 Section -->
+        <section class="content-section" id="pedigree-section">
+            <div class="section-header">
+                <h2>📜 血统登记</h2>
+                <button class="btn-primary" onclick="showAddPedigreeForm()">+ 添加血统登记</button>
+            </div>
+
+            <!-- Add Pedigree Form -->
+            <div class="form-container" id="addPedigreeForm" style="display: none;">
+                <h3>添加血统登记</h3>
+                <form onsubmit="addPedigree(event)">
+                    <div class="form-group">
+                        <label>种驴 *</label>
+                        <select id="pedigree_donkey_id" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>父亲</label>
+                        <select id="pedigree_father_id"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>母亲</label>
+                        <select id="pedigree_mother_id"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>祖父(父系)</label>
+                        <select id="pedigree_grandfather_paternal_id"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>祖母(父系)</label>
+                        <select id="pedigree_grandmother_paternal_id"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>祖父(母系)</label>
+                        <select id="pedigree_grandfather_maternal_id"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>祖母(母系)</label>
+                        <select id="pedigree_grandmother_maternal_id"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>登记号</label>
+                        <input type="text" id="pedigree_registration_number">
+                    </div>
+                    <div class="form-group">
+                        <label>登记日期</label>
+                        <input type="date" id="pedigree_registration_date">
+                    </div>
+                    <div class="form-group">
+                        <label>备注</label>
+                        <textarea id="pedigree_remarks" rows="3"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">保存</button>
+                        <button type="button" class="btn-secondary" onclick="hideAddPedigreeForm()">取消</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Search Pedigree -->
+            <div class="search-container">
+                <label>查询种驴血统：</label>
+                <select id="searchPedigreeDonkey" onchange="searchPedigree()">
+                    <option value="">请选择种驴</option>
+                </select>
+            </div>
+
+            <!-- Pedigree Display -->
+            <div id="pedigreeDisplay"></div>
+        </section>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
