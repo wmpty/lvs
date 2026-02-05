@@ -1,5 +1,17 @@
 # 毛驴育种管理系统 (Donkey Breeding Management System)
 
+> **⚠️ 重要提示 / Important Notice**: 
+> 
+> 如果你在 `main` 分支看不到完整的项目代码，请切换到 `copilot/develop-donkey-breeding-app` 分支！
+> 
+> If you can't see the complete project code on the `main` branch, please switch to the `copilot/develop-donkey-breeding-app` branch!
+>
+> 📖 **查看详细说明** / See detailed guide: [如何查看改变.md](如何查看改变.md)
+>
+> 🔗 **直接访问功能分支** / Direct link to feature branch: [copilot/develop-donkey-breeding-app](https://github.com/wmpty/lvs/tree/copilot/develop-donkey-breeding-app)
+
+---
+
 ## 🚀 快速开始 / Quick Start
 
 **如何打开这个项目？只需三步：**
